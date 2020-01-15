@@ -18,7 +18,7 @@ setup(
     name='tabelog_robot',
     entry_points={
         'console_scripts': [
-            'tabelog_robot = tabelog_robot.main:main',
+            'tabelogrobot = tabelogrobot.main:main',
         ],
     },
     version='0.1.0',
