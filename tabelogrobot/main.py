@@ -3,6 +3,7 @@ import logging
 from tabelogrobot.site.japan_ranking import JapanRankingSite
 from tabelogrobot.site.detail import DetailSite
 from catscore.http.request import CatsRequest
+from catscore.lib.time import get_today_date
 
 def main():
     parser = argparse.ArgumentParser(description="tabelog robot")
@@ -16,7 +17,7 @@ def main():
     request: CatsRequest = CatsRequest()
     for f in args.function:
         if f == "japan_ranking":
-            output_path = f"{args.dump_path}/japan_ranking.csv"
+            output_path = f"{args.dump_path}/japan_ranking_{get_today_date()}.csv"
             result = JapanRankingSite(request).all_category_ranking(pandas=True)
             result.to_csv(output_path)
         elif f == "detail":
