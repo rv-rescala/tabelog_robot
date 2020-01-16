@@ -45,6 +45,7 @@ class JapanRankingSite:
         """
         def _parse_li(li):
             shop_name = li.find("a", {"class": "list-rst__rst-name-target"}).text
+            rank_num = li.find("i", {"class": "c-ranking-badge__contents"}).text
             shop_link = li.find("a", {"class": "list-rst__rst-name-target"}).get("href")
             shop_target = li.find("span", {"class": "list-rst__area-genre"}).text
             shop_photo = li.find("p", {"class": "list-rst__photo-item"}).find("img").get("src")
@@ -60,7 +61,9 @@ class JapanRankingSite:
             shop_pr_comment_first = shop_pr_comment["pr_comment_first"]
             # list-rst__comment-item
             shop_comments = ",".join(list(map(lambda x: x.find("strong").text, li.findAll("li", {"class": "list-rst__comment-item"}))))
-            return RankedItem(shop_name=shop_name,
+            return RankedItem(rank_keyword=keyword,
+                              rank_num=rank_num,
+                              shop_name=shop_name,
                               shop_link=shop_link,
                               shop_target=shop_target,
                               shop_photo=shop_photo,

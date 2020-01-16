@@ -2,6 +2,8 @@ from dataclasses import dataclass, field
 
 @dataclass(frozen=True)
 class RankedItem:
+    rank_keyword: str
+    rank_num: str
     shop_name: str
     shop_link: str
     shop_target: str
