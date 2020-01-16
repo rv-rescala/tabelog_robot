@@ -18,6 +18,7 @@ def main():
     for f in args.function:
         if f == "japan_ranking":
             output_path = f"{args.dump_path}/tabelog/japan_ranking_{get_today_date()}.csv"
+            print(f"output to {output_path}")
             result = JapanRankingSite(request).all_category_ranking(pandas=True)
             result.to_csv(output_path)
         elif f == "detail":
