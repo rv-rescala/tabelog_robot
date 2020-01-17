@@ -8,11 +8,12 @@ from catscore.http.request import CatsRequest
 from catscore.lib.logger import CatsLogging as logging
 from catscore.lib.time import get_today_date, get_current_time
 from bs4 import BeautifulSoup
-from tabelogrobot.model.ranking import RankedItem
+from tabelog.model.ranking import RankedItem
 import itertools
 import pandas as pd
 from dataclasses import asdict
-from tabelogrobot.site.detail import DetailSite
+from tabelog.site.detail import DetailSite
+from catscore.lib.time import get_today_date
 
 class JapanRankingSite:
     base_url = "https://tabelog.com"
@@ -74,7 +75,8 @@ class JapanRankingSite:
                               shop_lunch_budget=shop_lunch_budget,
                               shop_comments=shop_comments,
                               shop_pr_comment_title=shop_pr_comment_title,
-                              shop_pr_comment_first=shop_pr_comment_first)
+                              shop_pr_comment_first=shop_pr_comment_first,
+                              update_date=get_today_date())
         
         soup = self.request.get(url=url, response_content_type="html").content
         rank_name = soup.find("strong", "list-condition__title").text.replace("\n","").replace(" ","")

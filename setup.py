@@ -15,10 +15,10 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='tabelog_robot',
+    name='tabelog',
     entry_points={
         'console_scripts': [
-            'tabelogrobot = tabelogrobot.main:main',
+            'tabelog = tabelog.main:main',
         ],
     },
     version='0.1.2',
