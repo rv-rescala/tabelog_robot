@@ -6,7 +6,7 @@ from pyspark.sql import SparkSession
 from pyspark import SparkContext
 from tabelog.model.ranking import RankedItemTable, CookedRankedItemTable
 from catscore.db.mysql import MySQLConf
-from catscore.word.mecab import CatsMeCab
+from catslab.word.mecab import CatsMeCab
 
 def main():
     # spark
@@ -19,19 +19,21 @@ def main():
     parser = argparse.ArgumentParser(description='pyspark app args')
     parser.add_argument('-ip', '--input_path', type=str, required=True, help='input folder path')
     parser.add_argument('-db', '--db_conf', type=str, required=True, help='input db conf path')
-    parser.add_argument('-md', '--mecab_dict', type=str, help='input mecab dict path')
+    parser.add_argument('-mc', '--mecab_conf', type=str, required=True, help='input db conf path')
     args = parser.parse_args()
-    print("todb_job: start")
     print(f"args: {args}")
+    ## db
     mysql_conf = MySQLConf.from_json(args.db_conf)
     print(f"mysql_conf {mysql_conf}")
+    ## mecab
+    mecab = CatsMeCab.from_json(args.mecab_conf)
     
     # convert
     # step1
     ranked_item_df = RankedItemTable.from_file_as_df(spark, args.input_path)
     RankedItemTable.to_db(spark=spark, df=ranked_item_df, mysql_conf=mysql_conf)
     # step2
-    cooked_ranked_item = RankedItemTable.cooking(spark=spark, df=ranked_item_df, mecab_dict=args.mecab_dict)
+    cooked_ranked_item = RankedItemTable.cooking(spark=spark, df=ranked_item_df, mecab_dict=mecab.dict_path)
     CookedRankedItemTable.to_db(spark=spark, df=cooked_ranked_item, mysql_conf=mysql_conf)
     
 if __name__ == '__main__':

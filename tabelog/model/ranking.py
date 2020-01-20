@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from pyspark.sql import SparkSession, DataFrame
 from catscore.db.mysql import MySQLConf
-from catscore.word.mecab import CatsMeCab
+from catslab.word.mecab import CatsMeCab
 
 class RankedItemTable:
     _table_name = "tableog_ranked_item"
@@ -16,7 +16,7 @@ class RankedItemTable:
         return df
     
     @classmethod
-    def to_db(cls, spark:SparkSession, df:DataFrame, url:MySQLConf):
+    def to_db(cls, spark:SparkSession, df:DataFrame, mysql_conf:MySQLConf):
         df.write.jdbc(mysql_conf.connection_uri("jdbc"), table=cls._table_name, mode='overwrite')
     
     @classmethod
@@ -77,7 +77,6 @@ class CookedRankedItemTable:
     def from_db_as_dataframe(cls, engine):
         pass
         
-    
 
 @dataclass(frozen=True)
 class CookedRankedItem:
