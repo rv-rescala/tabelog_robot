@@ -16,8 +16,8 @@ class DetailSite:
     def pr_comment(self):
         pr_comment_wrap = self.soup.find("div", {"class": "pr-comment-wrap"})
         if pr_comment_wrap != None:
-            pr_comment_title = pr_comment_wrap.find("h3", {"class": "pr-comment-title"}).text
-            pr_comment_first = pr_comment_wrap.find("span", {"class": "pr-comment__first"}).text
+            pr_comment_title = pr_comment_wrap.find("h3", {"class": "pr-comment-title"})
+            pr_comment_first = pr_comment_wrap.find("span", {"class": "pr-comment__first"})
         else:
             logging.error(f"{self.url} comment_wrap is None")
             pr_comment_title = ""

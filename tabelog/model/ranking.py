@@ -12,7 +12,7 @@ class RankedItemTable:
         """
         input_path = f"{input_path}/*.csv"
         print(f"RankedItemTable: input path is {input_path}")
-        df = spark.read.option("header", "true").csv(input_path).drop("_c0")
+        df = spark.read.csv(path=input_path,header=True,multiLine=True,ignoreLeadingWhiteSpace=True,escape="\"").drop("_c0")
         return df
     
     @classmethod
@@ -25,9 +25,9 @@ class RankedItemTable:
             s = f'{d["shop_comments"]},{d["shop_pr_comment_title"]},{d["shop_pr_comment_first"]}'
             mecab = CatsMeCab(mecab_dict)
             parsed_s = mecab.parse(str(s))
-            noun_s = list(filter(lambda r: r.word_type == "名詞", parsed_s))
+            noun_s = list(filter(lambda r: (r.word_type == "名詞") or (r.word_type == "動詞") or (r.word_type == "形容詞"), parsed_s))
             noun_one_str = list(map(lambda r: f"{r.word}", noun_s))
-            nouns = ",".join(noun_one_str)
+            nouns = ",".join(list(filter(lambda r: r != "None", noun_one_str)))
             result = CookedRankedItem(
                 rank_keyword = d["rank_keyword"],
                 rank_num = d["rank_num"],
@@ -43,7 +43,6 @@ class RankedItemTable:
                 shop_comments = d["shop_comments"],
                 shop_pr_comment_title = d["shop_pr_comment_title"],
                 shop_pr_comment_first = d["shop_pr_comment_first"],
-                update_date = d["update_date"],
                 nouns = nouns)
             return result
         return df.rdd.map(lambda d: _cooking(d)).toDF()
@@ -94,5 +93,4 @@ class CookedRankedItem:
     shop_comments: str
     shop_pr_comment_title: str
     shop_pr_comment_first: str
-    update_date: str
     nouns: str

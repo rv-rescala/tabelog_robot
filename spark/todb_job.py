@@ -30,7 +30,7 @@ def main():
     
     # convert
     # step1
-    ranked_item_df = RankedItemTable.from_file_as_df(spark, args.input_path)
+    ranked_item_df = RankedItemTable.from_file_as_df(spark, args.input_path).drop("update_date").distinct()
     RankedItemTable.to_db(spark=spark, df=ranked_item_df, mysql_conf=mysql_conf)
     # step2
     cooked_ranked_item = RankedItemTable.cooking(spark=spark, df=ranked_item_df, mecab_dict=mecab.dict_path)
