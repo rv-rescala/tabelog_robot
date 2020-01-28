@@ -8,12 +8,14 @@ from catscore.http.request import CatsRequest
 from catscore.lib.logger import CatsLogging as logging
 from catscore.lib.time import get_today_date, get_current_time
 from bs4 import BeautifulSoup
-from tabelog.model.ranking import RankedItem
+from tabelog.model.ranking import RankedItem, ResultRankedItem
 import itertools
 import pandas as pd
 from dataclasses import asdict
 from tabelog.site.detail import DetailSite
 from catscore.lib.time import get_today_date
+from catscore.lib.pandas import PandasConverter
+from catscore.lib.functional import flatten
 
 class JapanRankingSite:
     base_url = "https://tabelog.com"
@@ -92,18 +94,16 @@ class JapanRankingSite:
             [type] -- [description]
         """
         li = self.get_page().content.find("ul", {"class", "rank-level2"}).findAll("li", {"class", "level2"})
+        result = []
         result = list(map(lambda i: (i.text.replace("\n",""), i.find("a").get("href")), li))
         result.append(("総合",f"{self.base_url}/rank"))
         logging.info(result)
         return result
     
-    def all_category_ranking(self, pandas=False):
+    def all_category_ranking(self) -> ResultRankedItem:
         """[summary]
         """
         menu = self.category_ranking_menu
         r = list(map(lambda m: self.category_ranking(m[0], m[1]), menu))
-        result = list(itertools.chain.from_iterable(r))
-        if pandas:
-            return pd.DataFrame([asdict(x) for x in result])
-        else:
-            return result
+        result = flatten(r)
+        return ResultRankedItem(ranked_items=result)

@@ -19,28 +19,15 @@ def main():
     print(args)
     # init
     request: CatsRequest = CatsRequest()
-    engine = None
-    if args.db_conf != None:
-        mysql_conf = MySQLConf.from_json(args.db_conf)
-        print(f"mysql_conf {mysql_conf}")
-        engine = create_engine(mysql_conf.connection_uri("pymysql"), encoding="utf-8", echo=False)
-    if args.dump_path == None:
-        dump_path = "/tmp"
-    else:
-        dump_path = args.dump_path
         
     for f in args.function:
         if f == "japan_ranking":
-            output_path = f"{dump_path}/tabelog/japan_ranking_{get_today_date()}.csv"
+            output_path = f"{args.dump_path}/tabelog/japan_ranking_{get_today_date()}.json"
             print(f"output to {output_path}")
-            result = JapanRankingSite(request).all_category_ranking(pandas=True)
-            result.to_csv(output_path)
-        elif f == "detail":
-            result = DetailSite(request, "https://tabelog.com/aichi/A2301/A230104/23050337/")
-        elif f == "cache":
-            output_path = f"{dump_path}/tabelog/japan_ranking_{get_today_date()}.json"
-            print(f"output to {output_path}")
-    
+            result = JapanRankingSite(request).all_category_ranking()
+            j = result.to_json(indent=4, ensure_ascii=False)
+            with open(output_path, "w") as f:
+                f.write(j)
     ## close        
     request.close()
     

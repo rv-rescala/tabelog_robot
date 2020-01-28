@@ -2,6 +2,8 @@ from dataclasses import dataclass, field
 from pyspark.sql import SparkSession, DataFrame
 from catscore.db.mysql import MySQLConf
 from catslab.word.mecab import CatsMeCab
+from dataclasses_json import dataclass_json
+from typing import List
 
 class RankedItemTable:
     _table_name = "tableog_ranked_item"
@@ -48,6 +50,7 @@ class RankedItemTable:
         return df.rdd.map(lambda d: _cooking(d)).toDF()
     
 @dataclass(frozen=True)
+@dataclass_json
 class RankedItem:
     rank_keyword: str
     rank_num: str
@@ -64,6 +67,11 @@ class RankedItem:
     shop_pr_comment_title: str
     shop_pr_comment_first: str
     update_date: str
+    
+@dataclass(frozen=True)
+@dataclass_json
+class ResultRankedItem:
+    ranked_items: List[RankedItem]
     
 class CookedRankedItemTable:
     _table_name = "cooked_tableog_ranked_item"
@@ -94,3 +102,4 @@ class CookedRankedItem:
     shop_pr_comment_title: str
     shop_pr_comment_first: str
     nouns: str
+
